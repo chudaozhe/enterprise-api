@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+ <trees>
+     <tree path="/app/controllers" title="控制器"/>
+     <tree path="/app/middlewares" title="中间件"/>
+     <tree path="/app/models" title="model"/>
+     <tree path="/app/routes" title="路由"/>
+     <tree path="/app/config" title="配置文件"/>
+     <tree path="/core/cache" title="缓存"/>
+     <tree path="/core/db" title="db"/>
+     <tree path="/core/helper" title="助手函数"/>
+     <tree path="/core/log" title="日志"/>
+     <tree path="/core/response.go" title="响应，统一输出" extension="go"/>
+     <tree path="/core/request.go" title="请求" extension="go"/>
+    <tree path="/logs" title="日志目录"/>
+    <tree path="/app/controllers/admin" title="管理员"/>
+    <tree path="/app/controllers/user" title="客户端"/>
+    <tree path="/app/middlewares/auth.go" title="api鉴权" extension="go"/>
+    <tree path="/app/middlewares/cors.go" title="跨域" extension="go"/>
+    <tree path="/app/middlewares/log.go" title="日志" extension="go"/>
+</trees>

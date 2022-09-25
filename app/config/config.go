@@ -19,6 +19,7 @@ type Config struct {
 	Database    DatabaseConfig `json:"database"`
 	RedisConfig RedisConfig    `json:"redis_config"`
 	SMTPConfig  SMTPConfig     `json:"smtp_config"`
+	MailConfig  MailConfig     `json:"mail_config"`
 	FileConfig  FileConfig     `json:"file_config"`
 }
 
@@ -41,7 +42,11 @@ type SMTPConfig struct {
 	Password string `json:"password"`
 	SSL      bool   `json:"ssl"`
 }
-
+type MailConfig struct {
+	Title   string `json:"title"`
+	Content string `json:"content"`
+	Url     string `json:"url"`
+}
 type FileConfig struct {
 	Prefix string `json:"prefix"`
 	Avatar string `json:"avatar"`

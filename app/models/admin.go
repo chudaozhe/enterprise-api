@@ -1,6 +1,7 @@
 package models
 
 import (
+	"enterprise-api/app/config"
 	orm "enterprise-api/core/db"
 	"enterprise-api/core/helper"
 	"errors"
@@ -47,7 +48,6 @@ func (admin Admin) CreateNoPwd() (id int, err error) {
 		admin.Password = password
 		admin.Salt = salt
 		admin.Init = 1
-		fmt.Println(admin, "heihei")
 
 		result := orm.Db.Create(&admin)
 		if result.Error != nil {
@@ -63,11 +63,12 @@ func InitPasswd(admin Admin) (password string, salt string, err error) {
 	salt = helper.Random(6, "")
 	password = helper.Random(6, "")
 	//发送email
-	content := "登录名:{username}\n密码:{passwd}\n访问这里登录:<a href='{weburl}' target='_blank'>{weburl}</a> \n\n\n\n此邮件由系统自动发出,请勿回复"
+	conf := config.GetConfig().MailConfig
+	content := conf.Content
 	content = strings.ReplaceAll(content, "{username}", admin.Username)
 	content = strings.ReplaceAll(content, "{passwd}", password)
-	content = strings.ReplaceAll(content, "{weburl}", "http://test.com/aa")
-	err0 := SendEmail(admin.Email, "您的密码已被重置", content)
+	content = strings.ReplaceAll(content, "{url}", conf.Url)
+	err0 := SendEmail(admin.Email, conf.Title, content)
 	if err0 != nil {
 		fmt.Println(err0.Error())
 		err = errors.New("密码发送失败,请重试")

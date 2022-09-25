@@ -18,10 +18,11 @@ import (
 
 // 保存管理员头像
 func SaveAdminAvatar(id int, content string) (dst string) {
-	root, err0 := os.Getwd()
+	root, err0 := os.Executable()
 	if err0 != nil {
 		return ""
 	}
+	root = path.Dir(root)
 	conf := config.GetConfig().FileConfig
 	dst = conf.Prefix + conf.Avatar
 	dst = strings.ReplaceAll(dst, "[admin_id]", core.ToStr(id))
@@ -44,10 +45,11 @@ func SaveAdminAvatar(id int, content string) (dst string) {
 
 // 保存图片空间图片
 func SavePhoto(content string) (dst string) {
-	root, err0 := os.Getwd()
+	root, err0 := os.Executable()
 	if err0 != nil {
 		return ""
 	}
+	root = path.Dir(root)
 	fileUnixName := strconv.FormatInt(helper.GetUnix(), 10)
 	conf := config.GetConfig().FileConfig
 	dst = conf.Prefix + conf.Photo
@@ -83,11 +85,12 @@ func SaveEditorImage(c *gin.Context, file *multipart.FileHeader) (dst string, er
 		return
 	}
 
-	root, err0 := os.Getwd()
+	root, err0 := os.Executable()
 	if err0 != nil {
 		err = errors.New("根目录获取失败")
 		return
 	}
+	root = path.Dir(root)
 	fileUnixName := strconv.FormatInt(helper.GetUnix(), 10)
 	conf := config.GetConfig().FileConfig
 	dst = conf.Prefix + conf.Editor

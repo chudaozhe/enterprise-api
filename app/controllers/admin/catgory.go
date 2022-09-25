@@ -6,17 +6,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type CategoryItem struct {
-	Label string `json:"label"`
-	Value int    `json:"value"`
-}
-
-type CategoryTree struct {
-	Label    string          `json:"label"`
-	Value    int             `json:"value"`
-	Children []*CategoryItem `json:"children"`
-}
-
 func ListCategory(c *gin.Context) {
 	type0 := c.DefaultQuery("type", "")
 	list, err := categoryModel.List(core.ToInt(type0))

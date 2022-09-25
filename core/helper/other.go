@@ -1,6 +1,8 @@
 package helper
 
 import (
+	"crypto/md5"
+	"fmt"
 	"reflect"
 	"regexp"
 	"strings"
@@ -20,4 +22,9 @@ func StructToMap(obj interface{}) map[string]interface{} {
 		data[strings.ToLower(t.Field(i).Name)] = v.Field(i).Interface()
 	}
 	return data
+}
+
+func Md5(str string) string {
+	data := []byte(str)
+	return fmt.Sprintf("%x", md5.Sum(data))
 }

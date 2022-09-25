@@ -11,8 +11,8 @@ import (
 func Logger() *logrus.Logger {
 	now := time.Now()
 	logFilePath := ""
-	if dir, err := os.Getwd(); err == nil {
-		logFilePath = dir + "/logs/"
+	if dir, err := os.Executable(); err == nil {
+		logFilePath = path.Dir(dir) + "/logs/"
 	}
 	if err := os.MkdirAll(logFilePath, 0755); err != nil {
 		fmt.Println(err.Error())

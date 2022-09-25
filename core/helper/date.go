@@ -1,8 +1,6 @@
 package helper
 
 import (
-	"crypto/md5"
-	"fmt"
 	"time"
 )
 
@@ -31,8 +29,4 @@ func GetDate() string {
 func GetDay() string {
 	template := "20060102"
 	return time.Now().Format(template)
-}
-func Md5(str string) string {
-	data := []byte(str)
-	return fmt.Sprintf("%x", md5.Sum(data))
 }

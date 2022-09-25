@@ -21,10 +21,6 @@ func InitRedis() {
 		PoolSize:     10,
 		PoolTimeout:  30 * time.Second,
 	})
-	_, err := RedisClient.Ping().Result()
-	if err == redis.Nil {
-		fmt.Print("Redis异常")
-	} else if err != nil {
-		fmt.Print("失败:", err)
-	}
+	pong, err := RedisClient.Ping().Result()
+	fmt.Println(pong, err)
 }

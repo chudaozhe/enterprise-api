@@ -28,7 +28,7 @@ func InitRouter() *gin.Engine {
 
 		// 案例
 		userRouter.GET("/:user_id/category/:category_id/cases", user.ListCase)
-		userRouter.GET("/:user_id/cases/:cases_id", user.DetailCase)
+		userRouter.GET("/:user_id/cases/:case_id", user.DetailCase)
 
 		// 文章
 		userRouter.GET("/:user_id/category/:category_id/article", user.ListArticle)
