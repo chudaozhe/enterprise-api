@@ -15,7 +15,7 @@ func Success(c *gin.Context, code int, data interface{}) {
 
 // 错误状态处理
 func Error(c *gin.Context, code int, msg string) {
-	c.JSON(http.StatusBadRequest,
+	c.JSON(http.StatusOK,
 		gin.H{
 			"err": code,
 			"msg": msg,

@@ -3,6 +3,8 @@ package helper
 import (
 	"crypto/md5"
 	"fmt"
+	"io"
+	"os"
 	"reflect"
 	"regexp"
 	"strings"
@@ -27,4 +29,15 @@ func StructToMap(obj interface{}) map[string]interface{} {
 func Md5(str string) string {
 	data := []byte(str)
 	return fmt.Sprintf("%x", md5.Sum(data))
+}
+
+// 支持大文件
+func Md5File(file string) string {
+	f, _ := os.Open(file)
+	defer f.Close()
+	md5hash := md5.New()
+	if _, err := io.Copy(md5hash, f); err != nil {
+		panic(err.Error())
+	}
+	return fmt.Sprintf("%x", md5hash.Sum(nil))
 }

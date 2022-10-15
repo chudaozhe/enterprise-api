@@ -27,6 +27,10 @@ func GetToken(id int, role string) (string, error) {
 }
 
 func CheckToken(id int, token string, role string) (err error) {
+	if id == 0 {
+		err = errors.New("id 必须大于0")
+		return
+	}
 	if len(token) == 0 {
 		err = errors.New("未传递token")
 		return

@@ -16,10 +16,10 @@ func Auth(role string) gin.HandlerFunc {
 			c.Abort()
 			return
 		}
-		if core.ToInt(roleId) > 0 {
+		if role == "admin" || (role == "user" && core.ToInt(roleId) > 0) {
 			err := models.CheckToken(core.ToInt(roleId), token, role)
 			if err != nil {
-				core.Error(c, 403, err.Error())
+				core.Error(c, 401, err.Error())
 				c.Abort()
 				return
 			}
