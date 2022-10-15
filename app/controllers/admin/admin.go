@@ -20,12 +20,13 @@ func Login(c *gin.Context) {
 				core.Error(c, 1, "token设置失败")
 				return
 			}
-			info := helper.StructToMap(admin)
-			info["token"] = token
-			delete(info, "password")
-			delete(info, "salt")
-			delete(info, "auth")
-			core.Success(c, 0, info)
+			core.Success(c, 0, struct {
+				*models.Admin
+				Token string `json:"token"`
+			}{
+				&admin,
+				token,
+			})
 		}
 	} else {
 		core.Error(c, 400, "参数错误")
@@ -105,9 +106,11 @@ func Changepasswd(c *gin.Context) {
 	if len(password) > 0 && len(newPassword) > 0 {
 		admin, err0 := models.FindById(core.ToInt(id))
 		if err0 != nil {
+			core.Error(c, 1, err0.Error())
+		} else {
 			err := admin.ChangePasswd(password, newPassword)
 			if err != nil {
-				core.Error(c, 1, "修改失败")
+				core.Error(c, 1, err.Error())
 				return
 			}
 			core.Success(c, 0, gin.H{"update": true})

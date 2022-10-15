@@ -14,8 +14,8 @@ type Admin struct {
 	Id         int    `json:"id"`
 	Username   string `json:"username"`
 	Nickname   string `json:"nickname"`
-	Password   string `json:"password,omitempty"`
-	Salt       string `json:"salt,omitempty"`
+	Password   string `json:"-"`
+	Salt       string `json:"-"`
 	Email      string `json:"email"`
 	Mobile     string `json:"mobile"`
 	Avatar     string `json:"avatar"`
@@ -24,10 +24,6 @@ type Admin struct {
 	Auth       string `json:"auth"`
 	CreateTime int64  `json:"create_time"`
 	UpdateTime int64  `json:"update_time"`
-}
-type AdminToken struct {
-	Admin
-	Token string `json:"token"`
 }
 
 // 设置表名
@@ -64,11 +60,8 @@ func InitPasswd(admin Admin) (password string, salt string, err error) {
 	password = helper.Random(6, "")
 	//发送email
 	conf := config.GetConfig().MailConfig
-	content := conf.Content
-	content = strings.ReplaceAll(content, "{username}", admin.Username)
-	content = strings.ReplaceAll(content, "{passwd}", password)
-	content = strings.ReplaceAll(content, "{url}", conf.Url)
-	err0 := SendEmail(admin.Email, conf.Title, content)
+	replacer := strings.NewReplacer("{username}", admin.Username, "{passwd}", password, "{url}", conf.Url)
+	err0 := SendEmail(admin.Email, conf.Title, replacer.Replace(conf.Content))
 	if err0 != nil {
 		fmt.Println(err0.Error())
 		err = errors.New("密码发送失败,请重试")
