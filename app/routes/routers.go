@@ -15,7 +15,7 @@ func InitRouter() *gin.Engine {
 
 	userRouter := v1.Group("user")
 	userRouter.GET("/test", user.CreateTest) //
-	userRouter.Use(middlewares.Auth("user"))
+	userRouter.Use(middlewares.Auth("user")) //middlewares.JWTAuth("user")
 	{
 		// 轮播图
 		userRouter.GET("/:user_id/flash", user.ListFlash)
@@ -42,7 +42,7 @@ func InitRouter() *gin.Engine {
 	adminRouter.POST("/login", admin.Login)          //登录
 	adminRouter.POST("/forget", admin.Findpasswd)    //找回密码
 	adminRouter.POST("/editor/upload", admin.Upload) //编辑器文件上传
-	adminRouter.Use(middlewares.Auth("admin"))
+	adminRouter.Use(middlewares.Auth("admin"))       //middlewares.JWTAuth("admin")
 	{
 		//admin
 		adminRouter.GET("/:admin_id", admin.Detail)                //管理员详情

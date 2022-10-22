@@ -16,6 +16,7 @@ type Config struct {
 	AppName     string         `json:"app_name"`
 	AppHost     string         `json:"app_host"`
 	AppPort     string         `json:"app_port"`
+	JWTKey      string         `json:"jwt_key"`
 	Database    DatabaseConfig `json:"database"`
 	RedisConfig RedisConfig    `json:"redis_config"`
 	SMTPConfig  SMTPConfig     `json:"smtp_config"`

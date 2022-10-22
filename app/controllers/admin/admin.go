@@ -16,6 +16,17 @@ func Login(c *gin.Context) {
 			core.Error(c, 1, err.Error())
 		} else {
 			token, err := models.SetToken(admin.Id, true, 0, "admin")
+			/* jwt
+			claims := models.MyCustomClaims{
+				Id:       admin.Id,
+				Username: admin.Username,
+				StandardClaims: jwt.StandardClaims{
+					ExpiresAt: time.Now().Add(7 * 24 * time.Hour).Unix(), // 过期时间1星期
+					Issuer:    admin.Username,                            // 签发人
+				},
+			}
+			token, err := models.CreateToken(claims)
+			*/
 			if err != nil {
 				core.Error(c, 1, "token设置失败")
 				return
