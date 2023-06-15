@@ -9,7 +9,7 @@ import (
 
 func SendEmail(toMail string, title string, content string) error {
 	conf := config.GetConfig().SMTPConfig
-	auth := smtp.PlainAuth("", conf.Username, conf.Password, conf.Port)
+	auth := smtp.PlainAuth("", conf.Username, conf.Password, conf.Host)
 
 	e := email.NewEmail()
 	e.From = conf.Username
