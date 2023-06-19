@@ -2,14 +2,18 @@ package user
 
 import (
 	flashModel "enterprise-api/app/models/flash"
+	"enterprise-api/app/schemas"
 	"enterprise-api/core"
 	"github.com/gin-gonic/gin"
 )
 
 func ListFlash(c *gin.Context) {
-	page := c.DefaultQuery("page", "1")
-	max := c.DefaultQuery("max", "100")
-	list, err := flashModel.List(true, core.ToInt(page), core.ToInt(max))
+	var listFlashIn schemas.ListFlashIn
+	if err := c.ShouldBindQuery(&listFlashIn); err != nil {
+		core.Error(c, 1, err.Error())
+		return
+	}
+	list, err := flashModel.List(true, listFlashIn.Page, listFlashIn.Max)
 	if err != nil {
 		core.Error(c, 1, err.Error())
 	} else {

@@ -3,18 +3,21 @@ package admin
 import (
 	"enterprise-api/app/config"
 	"enterprise-api/app/models"
+	"enterprise-api/app/schemas"
+	"enterprise-api/core"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
 
 // 保存编辑器图片
 func Upload(c *gin.Context) {
-	file, err := c.FormFile("file")
-	if err != nil {
-		c.JSON(http.StatusOK, gin.H{"success": false, "msg": "请选择图片"})
+	//file, err := c.FormFile("file")
+	var uploadIn schemas.UploadIn
+	if err := c.ShouldBind(&uploadIn); err != nil {
+		core.Error(c, 1, err.Error()) //请选择图片
 		return
 	}
-	path, err := models.SaveEditorImage(c, file)
+	path, err := models.SaveEditorImage(c, uploadIn.File)
 	if err != nil {
 		c.JSON(http.StatusOK, gin.H{"success": false, "msg": err.Error()})
 		return

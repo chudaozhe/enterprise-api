@@ -2,20 +2,27 @@ package user
 
 import (
 	articleModel "enterprise-api/app/models/article"
+	"enterprise-api/app/schemas"
 	"enterprise-api/core"
 	"github.com/gin-gonic/gin"
 )
 
 func ListArticle(c *gin.Context) {
-	categoryId, _ := c.Params.Get("category_id")
-	page := c.DefaultQuery("page", "1")
-	max := c.DefaultQuery("max", "10")
-	keyword := c.DefaultQuery("keyword", "")
-	categoryIds := []int{}
-	if len(categoryId) > 0 && categoryId != "0" {
-		categoryIds = append(categoryIds, core.ToInt(categoryId))
+	var currentCategory schemas.CurrentCategory
+	if err := c.ShouldBindUri(&currentCategory); err != nil {
+		core.Error(c, 1, err.Error())
+		return
 	}
-	count, articles, err := articleModel.List(categoryIds, keyword, false, core.ToInt(page), core.ToInt(max))
+	var listArticleIn schemas.ListArticleIn
+	if err := c.ShouldBindQuery(&listArticleIn); err != nil {
+		core.Error(c, 1, err.Error())
+		return
+	}
+	var categoryIds []int
+	if currentCategory.CategoryId > 0 {
+		categoryIds = append(categoryIds, currentCategory.CategoryId)
+	}
+	count, articles, err := articleModel.List(categoryIds, listArticleIn.Keyword, false, listArticleIn.Page, listArticleIn.Max)
 	if err != nil {
 		core.Error(c, 1, err.Error())
 	} else {
@@ -23,15 +30,15 @@ func ListArticle(c *gin.Context) {
 	}
 }
 func DetailArticle(c *gin.Context) {
-	id, _ := c.Params.Get("article_id")
-	if core.ToInt(id) > 0 {
-		article, err := articleModel.FindById(core.ToInt(id))
-		if err != nil {
-			core.Error(c, 1, err.Error())
-		} else {
-			core.Success(c, 0, article)
-		}
+	var detailArticleIn schemas.DetailArticleIn
+	if err := c.ShouldBindUri(&detailArticleIn); err != nil {
+		core.Error(c, 1, err.Error())
+		return
+	}
+	article, err := articleModel.FindById(detailArticleIn.ArticleId)
+	if err != nil {
+		core.Error(c, 1, err.Error())
 	} else {
-		core.Error(c, 1, "参数错误")
+		core.Success(c, 0, article)
 	}
 }

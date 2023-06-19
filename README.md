@@ -43,8 +43,8 @@ app/config/env
 ```
   "smtp_config": {
     "host": "smtp.mxhichina.com换成你自己的",
-    "port": ":465",
-    "ssl_port": ":25",
+    "port": ":25",
+    "ssl_port": ":465",
     "username": "aa@xxx.com换成你自己的",
     "password": "换成你自己的",
     "ssl": true

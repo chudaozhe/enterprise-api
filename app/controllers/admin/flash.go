@@ -2,14 +2,18 @@ package admin
 
 import (
 	flashModel "enterprise-api/app/models/flash"
+	"enterprise-api/app/schemas"
 	"enterprise-api/core"
 	"github.com/gin-gonic/gin"
 )
 
 func ListFlash(c *gin.Context) {
-	page := c.DefaultQuery("page", "1")
-	max := c.DefaultQuery("max", "100")
-	list, err := flashModel.List(false, core.ToInt(page), core.ToInt(max))
+	var listFlashIn schemas.ListFlashIn
+	if err := c.ShouldBindQuery(&listFlashIn); err != nil {
+		core.Error(c, 1, err.Error())
+		return
+	}
+	list, err := flashModel.List(false, listFlashIn.Page, listFlashIn.Max)
 	if err != nil {
 		core.Error(c, 1, err.Error())
 	} else {
@@ -18,122 +22,108 @@ func ListFlash(c *gin.Context) {
 }
 
 func CreateFlash(c *gin.Context) {
-	image := c.DefaultPostForm("image", "")
-	if len(image) > 0 {
-		page := flashModel.Flash{
-			Image:  image,
-			Title:  c.DefaultPostForm("title", ""),
-			Url:    c.DefaultPostForm("url", ""),
-			Sort:   core.ToInt(c.DefaultPostForm("sort", "")),
-			Status: core.ToInt(c.DefaultPostForm("status", "1")), //是否显示 1是 0否
-		}
-		id, err := page.CreateFlash()
-		if err != nil {
-			core.Error(c, 1, err.Error())
-			return
-		}
-		core.Success(c, 0, gin.H{
-			"id": id,
-		})
-	} else {
-		core.Success(c, 400, "参数错误")
+	var createFlashIn schemas.CreateFlashIn
+	if err := c.ShouldBind(&createFlashIn); err != nil {
+		core.Error(c, 1, err.Error())
+		return
 	}
+	page := flashModel.Flash{
+		Image:  createFlashIn.Image,
+		Title:  createFlashIn.Title,
+		Url:    createFlashIn.Url,
+		Sort:   createFlashIn.Sort,
+		Status: createFlashIn.Status, //是否显示 1是 0否
+	}
+	id, err := page.CreateFlash()
+	if err != nil {
+		core.Error(c, 1, err.Error())
+		return
+	}
+	core.Success(c, 0, gin.H{"id": id})
 }
+
 func DetailFlash(c *gin.Context) {
-	id, _ := c.Params.Get("flash_id")
-	if core.ToInt(id) > 0 {
-		detail, err := flashModel.FindById(core.ToInt(id))
-		if err != nil {
-			core.Error(c, 1, err.Error())
-		} else {
-			core.Success(c, 0, detail)
-		}
+	var currentFlash schemas.CurrentFlash
+	if err := c.ShouldBindUri(&currentFlash); err != nil {
+		core.Error(c, 1, err.Error())
+		return
+	}
+	detail, err := flashModel.FindById(currentFlash.FlashId)
+	if err != nil {
+		core.Error(c, 1, err.Error())
 	} else {
-		core.Error(c, 1, "参数错误")
+		core.Success(c, 0, detail)
 	}
 }
 
 func ChangeFlash(c *gin.Context) {
-	id, _ := c.Params.Get("flash_id")
-	if core.ToInt(id) > 0 {
-		updateData := flashModel.Flash{
-			Image:  c.DefaultPostForm("image", "-isnil-"),
-			Title:  c.DefaultPostForm("title", "-isnil-"),
-			Url:    c.DefaultPostForm("url", "-isnil-"),
-			Sort:   core.ToInt(c.DefaultPostForm("sort", "-1")),
-			Status: core.ToInt(c.DefaultPostForm("status", "1")), //是否显示 1是 0否
-		}
-		flash, err := flashModel.FindById(core.ToInt(id))
-		if err != nil {
-			core.Error(c, 1, "记录不存在")
-			return
-		}
-		if updateData.Image != "-isnil-" && updateData.Image != flash.Image {
-			flash.Image = updateData.Image
-		}
-		if updateData.Title != "-isnil-" && updateData.Title != flash.Title {
-			flash.Title = updateData.Title
-		}
-		if updateData.Url != "-isnil-" && updateData.Url != flash.Url {
-			flash.Url = updateData.Url
-		}
-		if updateData.Sort != -1 && updateData.Sort != flash.Sort {
-			flash.Sort = updateData.Sort
-		}
-		if updateData.Status != flash.Status {
-			flash.Status = updateData.Status
-		}
-		err2 := flash.UpdateFlash()
-		if err2 != nil {
-			core.Error(c, 1, err2.Error())
-			return
-		}
-		core.Success(c, 0, gin.H{
-			"update": "true",
-		})
-	} else {
-		core.Error(c, 1, "参数错误")
+	var currentFlash schemas.CurrentFlash
+	if err := c.ShouldBindUri(&currentFlash); err != nil {
+		core.Error(c, 1, err.Error())
+		return
 	}
+	var changeFlashIn schemas.ChangeFlashIn
+	if err := c.ShouldBind(&changeFlashIn); err != nil {
+		core.Error(c, 1, err.Error())
+		return
+	}
+	flash, err := flashModel.FindById(currentFlash.FlashId)
+	if err != nil {
+		core.Error(c, 1, "记录不存在")
+		return
+	}
+	flash.Image = changeFlashIn.Image
+	flash.Title = changeFlashIn.Title
+	flash.Url = changeFlashIn.Url
+	flash.Sort = changeFlashIn.Sort
+	flash.Status = changeFlashIn.Status //是否显示 1是 0否
+	err2 := flash.UpdateFlash()
+	if err2 != nil {
+		core.Error(c, 1, err2.Error())
+		return
+	}
+	core.Success(c, 0, gin.H{"update": true})
 }
 
 func DisplayFlash(c *gin.Context) {
-	id, _ := c.Params.Get("shortcut_id")
-	if core.ToInt(id) > 0 {
-		flash := &flashModel.Flash{Id: core.ToInt(id)}
-		err := flash.ChangeState(1)
-		if err != nil {
-			core.Error(c, 1, err.Error())
-		} else {
-			core.Success(c, 0, gin.H{"display": true})
-		}
+	var currentFlash schemas.CurrentFlash
+	if err := c.ShouldBindUri(&currentFlash); err != nil {
+		core.Error(c, 1, err.Error())
+		return
+	}
+	flash := &flashModel.Flash{Id: currentFlash.FlashId}
+	err := flash.ChangeState(1)
+	if err != nil {
+		core.Error(c, 1, err.Error())
 	} else {
-		core.Error(c, 1, "参数错误")
+		core.Success(c, 0, gin.H{"display": true})
 	}
 }
 func HiddenFlash(c *gin.Context) {
-	id, _ := c.Params.Get("shortcut_id")
-	if core.ToInt(id) > 0 {
-		flash := &flashModel.Flash{Id: core.ToInt(id)}
-		err := flash.ChangeState(0)
-		if err != nil {
-			core.Error(c, 1, err.Error())
-		} else {
-			core.Success(c, 0, gin.H{"display": true})
-		}
+	var currentFlash schemas.CurrentFlash
+	if err := c.ShouldBindUri(&currentFlash); err != nil {
+		core.Error(c, 1, err.Error())
+		return
+	}
+	flash := &flashModel.Flash{Id: currentFlash.FlashId}
+	err := flash.ChangeState(0)
+	if err != nil {
+		core.Error(c, 1, err.Error())
 	} else {
-		core.Error(c, 1, "参数错误")
+		core.Success(c, 0, gin.H{"hidden": true})
 	}
 }
+
 func DeleteFlash(c *gin.Context) {
-	id, _ := c.Params.Get("flash_id")
-	if core.ToInt(id) > 0 {
-		err := flashModel.DeleteById(core.ToInt(id))
-		if err != nil {
-			core.Error(c, 1, err.Error())
-		} else {
-			core.Success(c, 0, gin.H{"delete": true})
-		}
+	var currentFlash schemas.CurrentFlash
+	if err := c.ShouldBindUri(&currentFlash); err != nil {
+		core.Error(c, 1, err.Error())
+		return
+	}
+	err := flashModel.DeleteById(currentFlash.FlashId)
+	if err != nil {
+		core.Error(c, 1, err.Error())
 	} else {
-		core.Error(c, 1, "参数错误")
+		core.Success(c, 0, gin.H{"delete": true})
 	}
 }

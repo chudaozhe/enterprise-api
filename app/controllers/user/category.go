@@ -2,13 +2,21 @@ package user
 
 import (
 	categoryModel "enterprise-api/app/models/category"
+	"enterprise-api/app/schemas"
 	"enterprise-api/core"
 	"github.com/gin-gonic/gin"
 )
 
 func ListCategory(c *gin.Context) {
-	type0 := core.ToInt(c.DefaultQuery("type", "2"))
-	list, err := categoryModel.List(type0)
+	var listCategoryIn schemas.ListCategoryIn
+	if err := c.ShouldBindQuery(&listCategoryIn); err != nil {
+		core.Error(c, 1, err.Error())
+		return
+	}
+	if listCategoryIn.Type == 0 {
+		listCategoryIn.Type = 2
+	}
+	list, err := categoryModel.List(listCategoryIn.Type)
 	if err != nil {
 		core.Error(c, 1, err.Error())
 	} else {

@@ -2,14 +2,18 @@ package user
 
 import (
 	shortcutModel "enterprise-api/app/models/shortcut"
+	"enterprise-api/app/schemas"
 	"enterprise-api/core"
 	"github.com/gin-gonic/gin"
 )
 
 func ListShortcut(c *gin.Context) {
-	page := c.DefaultQuery("page", "1")
-	max := c.DefaultQuery("max", "100")
-	list, err := shortcutModel.List(true, core.ToInt(page), core.ToInt(max))
+	var listShortcutIn schemas.ListShortcutIn
+	if err := c.ShouldBindQuery(&listShortcutIn); err != nil {
+		core.Error(c, 1, err.Error())
+		return
+	}
+	list, err := shortcutModel.List(true, listShortcutIn.Page, listShortcutIn.Max)
 	if err != nil {
 		core.Error(c, 1, err.Error())
 	} else {

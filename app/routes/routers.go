@@ -10,7 +10,7 @@ import (
 func InitRouter() *gin.Engine {
 	router := gin.Default()
 	// 要在路由组之前全局使用「跨域中间件」, 否则OPTIONS会返回404
-	router.Use(middlewares.Cors(), middlewares.LoggerToFile())
+	router.Use(middlewares.FixParam(), middlewares.Cors(), middlewares.LoggerToFile())
 	v1 := router.Group("v1")
 
 	userRouter := v1.Group("user")
@@ -40,14 +40,14 @@ func InitRouter() *gin.Engine {
 
 	adminRouter := v1.Group("admin")
 	adminRouter.POST("/login", admin.Login)          //登录
-	adminRouter.POST("/forget", admin.Findpasswd)    //找回密码
+	adminRouter.POST("/forget", admin.FindPasswd)    //找回密码
 	adminRouter.POST("/editor/upload", admin.Upload) //编辑器文件上传
 	adminRouter.Use(middlewares.Auth("admin"))       //middlewares.JWTAuth("admin")
 	{
 		//admin
 		adminRouter.GET("/:admin_id", admin.Detail)                //管理员详情
 		adminRouter.PUT("/:admin_id", admin.Change)                //修改账号信息
-		adminRouter.PUT("/:admin_id/password", admin.Changepasswd) //修改密码
+		adminRouter.PUT("/:admin_id/password", admin.ChangePasswd) //修改密码
 		adminRouter.PUT("/:admin_id/avatar", admin.Avatar)         //上传头像
 		adminRouter.DELETE("/:admin_id/logout", admin.Logout)      //退出
 
@@ -57,7 +57,7 @@ func InitRouter() *gin.Engine {
 		adminRouter.GET("/:admin_id/admin/:to_aid", admin.DetailAdmin)          //管理员详情
 		adminRouter.PUT("/:admin_id/admin/:to_aid", admin.ChangeAdmin)          //修改账号信息
 		adminRouter.DELETE("/:admin_id/admin/:to_aid", admin.DeleteAdmin)       //删除账号
-		adminRouter.PUT("/:admin_id/admin/:to_aid/reset", admin.Resetpasswd)    //重置密码
+		adminRouter.PUT("/:admin_id/admin/:to_aid/reset", admin.ResetPasswd)    //重置密码
 		adminRouter.PUT("/:admin_id/admin/:to_aid/auth", admin.ChangeAuth)      //设置权限
 		adminRouter.PUT("/:admin_id/admin/:to_aid/disable", admin.DisableAdmin) //禁止登陆
 		adminRouter.PUT("/:admin_id/admin/:to_aid/enable", admin.EnableAdmin)   //解禁

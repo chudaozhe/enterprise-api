@@ -2,19 +2,25 @@ package admin
 
 import (
 	categoryModel "enterprise-api/app/models/category"
+	"enterprise-api/app/schemas"
 	"enterprise-api/core"
 	"github.com/gin-gonic/gin"
 )
 
 func ListCategory(c *gin.Context) {
-	type0 := c.DefaultQuery("type", "")
-	list, err := categoryModel.List(core.ToInt(type0))
+	var listCategoryIn schemas.ListCategoryIn
+	if err := c.ShouldBindQuery(&listCategoryIn); err != nil {
+		core.Error(c, 1, err.Error())
+		return
+	}
+	list, err := categoryModel.List(listCategoryIn.Type)
 	if err != nil {
 		core.Error(c, 1, err.Error())
-	} else {
-		core.Success(c, 0, list)
+		return
 	}
+	core.Success(c, 0, list)
 }
+
 func List2Category(c *gin.Context) {
 	var boxArr []map[string]interface{} //最外层map切片
 	boxArr = append(boxArr, map[string]interface{}{"label": "新闻资讯", "value": 2})
@@ -40,101 +46,87 @@ func List2Category(c *gin.Context) {
 	boxArr[1]["children"] = type5arr
 	core.Success(c, 0, boxArr)
 }
+
 func CreateCategory(c *gin.Context) {
-	name := c.DefaultPostForm("name", "")
-	type0 := core.ToInt(c.DefaultPostForm("type", "2"))
-	if len(name) > 0 {
-		_, err0 := categoryModel.FindByName(name, type0)
-		if err0 != nil {
-			category := categoryModel.Category{
-				Name:     name,
-				Memo:     c.DefaultPostForm("memo", ""),
-				Type:     core.ToInt(c.DefaultPostForm("type", "1")),
-				ParentId: core.ToInt(c.DefaultPostForm("parent_id", "")),
-				Sort:     core.ToInt(c.DefaultPostForm("sort", "")),
-			}
-			id, err := category.CreateCategory()
-			if err != nil {
-				core.Error(c, 1, err.Error())
-				return
-			}
-			core.Success(c, 0, gin.H{
-				"id": id,
-			})
-		} else {
-			core.Error(c, 405, "记录已存在")
-		}
-	} else {
-		core.Success(c, 400, "参数错误")
+	var createCategoryIn schemas.CreateCategoryIn
+	if err := c.ShouldBind(&createCategoryIn); err != nil {
+		core.Error(c, 1, err.Error())
+		return
 	}
-}
-func DetailCategory(c *gin.Context) {
-	id, _ := c.Params.Get("category_id")
-	if core.ToInt(id) > 0 {
-		detail, err := categoryModel.FindById(core.ToInt(id))
+	_, err0 := categoryModel.FindByName(createCategoryIn.Name, createCategoryIn.Type)
+	if err0 != nil {
+		category := categoryModel.Category{
+			Name:     createCategoryIn.Name,
+			Memo:     createCategoryIn.Memo,
+			Type:     createCategoryIn.Type, //类型：1文件 2新闻 3技术支持
+			ParentId: createCategoryIn.ParentId,
+			Sort:     createCategoryIn.Sort,
+		}
+		id, err := category.CreateCategory()
 		if err != nil {
 			core.Error(c, 1, err.Error())
-		} else {
-			core.Success(c, 0, detail)
+			return
 		}
+		core.Success(c, 0, gin.H{"id": id})
 	} else {
-		core.Error(c, 1, "参数错误")
+		core.Error(c, 405, "记录已存在")
 	}
+}
+
+func DetailCategory(c *gin.Context) {
+	var currentCategory schemas.CurrentCategory
+	if err := c.ShouldBindUri(&currentCategory); err != nil {
+		core.Error(c, 1, err.Error())
+		return
+	}
+	detail, err := categoryModel.FindById(currentCategory.CategoryId)
+	if err != nil {
+		core.Error(c, 1, err.Error())
+		return
+	}
+	core.Success(c, 0, detail)
 }
 
 func ChangeCategory(c *gin.Context) {
-	id, _ := c.Params.Get("category_id")
-	if core.ToInt(id) > 0 {
-		updateData := categoryModel.Category{
-			Name:     c.DefaultPostForm("name", "-isnil-"),
-			Memo:     c.DefaultPostForm("memo", "-isnil-"),
-			Type:     core.ToInt(c.DefaultPostForm("type", "-1")),
-			ParentId: core.ToInt(c.DefaultPostForm("parent_id", "-1")),
-			Sort:     core.ToInt(c.DefaultPostForm("sort", "-1")),
-		}
-		category, err := categoryModel.FindById(core.ToInt(id))
-		if err != nil {
-			core.Error(c, 1, "记录不存在")
-			return
-		}
-		if updateData.Name != "-isnil-" && updateData.Name != category.Name {
-			category.Name = updateData.Name
-		}
-		if updateData.Memo != "-isnil-" && updateData.Memo != category.Memo {
-			category.Memo = updateData.Memo
-		}
-		if updateData.Type != core.ToInt("-1") && updateData.Type != category.Type {
-			category.Type = updateData.Type
-		}
-		if updateData.ParentId != core.ToInt("-1") && updateData.ParentId != category.ParentId {
-			category.ParentId = updateData.ParentId
-		}
-		if updateData.Sort != core.ToInt("-1") && updateData.Sort != category.Sort {
-			category.Sort = updateData.Sort
-		}
-		err2 := category.UpdateCategory()
-		if err2 != nil {
-			core.Error(c, 1, err2.Error())
-			return
-		}
-		core.Success(c, 0, gin.H{
-			"update": "true",
-		})
-	} else {
-		core.Error(c, 1, "参数错误")
+	var currentCategory schemas.CurrentCategory
+	if err := c.ShouldBindUri(&currentCategory); err != nil {
+		core.Error(c, 1, err.Error())
+		return
 	}
+	var changeCategoryIn schemas.ChangeCategoryIn
+	if err := c.ShouldBind(&changeCategoryIn); err != nil {
+		core.Error(c, 1, err.Error())
+		return
+	}
+	category, err := categoryModel.FindById(currentCategory.CategoryId)
+	if err != nil {
+		core.Error(c, 1, "记录不存在")
+		return
+	}
+
+	category.Name = changeCategoryIn.Name
+	category.Memo = changeCategoryIn.Memo
+	category.Type = changeCategoryIn.Type
+	category.ParentId = changeCategoryIn.ParentId
+	category.Sort = changeCategoryIn.Sort
+	err2 := category.UpdateCategory()
+	if err2 != nil {
+		core.Error(c, 1, err2.Error())
+		return
+	}
+	core.Success(c, 0, gin.H{"update": true})
 }
 
 func DeleteCategory(c *gin.Context) {
-	id, _ := c.Params.Get("category_id")
-	if core.ToInt(id) > 0 {
-		err := categoryModel.DeleteById(core.ToInt(id))
-		if err != nil {
-			core.Error(c, 1, err.Error())
-		} else {
-			core.Success(c, 0, gin.H{"delete": true})
-		}
-	} else {
-		core.Error(c, 1, "参数错误")
+	var currentCategory schemas.CurrentCategory
+	if err := c.ShouldBindUri(&currentCategory); err != nil {
+		core.Error(c, 1, err.Error())
+		return
 	}
+	err := categoryModel.DeleteById(currentCategory.CategoryId)
+	if err != nil {
+		core.Error(c, 1, err.Error())
+		return
+	}
+	core.Success(c, 0, gin.H{"delete": true})
 }
