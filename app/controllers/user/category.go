@@ -10,7 +10,7 @@ import (
 func ListCategory(c *gin.Context) {
 	var listCategoryIn schemas.ListCategoryIn
 	if err := c.ShouldBindQuery(&listCategoryIn); err != nil {
-		core.Error(c, 1, err.Error())
+		core.Error(c, 1, core.Translate(err))
 		return
 	}
 	if listCategoryIn.Type == 0 {

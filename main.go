@@ -4,6 +4,7 @@ import (
 	_ "embed"
 	"enterprise-api/app/config"
 	"enterprise-api/app/routes"
+	"enterprise-api/core"
 	"enterprise-api/core/cache"
 	"enterprise-api/core/db"
 	"github.com/gin-gonic/gin"
@@ -18,7 +19,7 @@ func main() {
 	} else if mode == "release" {
 		gin.SetMode(gin.ReleaseMode)
 	}
-
+	core.InitTrans("zh")
 	config.ParseConfig()
 	db.Init()
 	//初始化redis

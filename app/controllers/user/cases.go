@@ -10,12 +10,12 @@ import (
 func ListCase(c *gin.Context) {
 	var currentCategory schemas.CurrentCategory
 	if err := c.ShouldBindUri(&currentCategory); err != nil {
-		core.Error(c, 1, err.Error())
+		core.Error(c, 1, core.Translate(err))
 		return
 	}
 	var listCaseIn schemas.ListCaseIn
 	if err := c.ShouldBindQuery(&listCaseIn); err != nil {
-		core.Error(c, 1, err.Error())
+		core.Error(c, 1, core.Translate(err))
 		return
 	}
 	count, list, err := casesModel.List(currentCategory.CategoryId, listCaseIn.Keyword, false, listCaseIn.Page, listCaseIn.Max)
@@ -29,7 +29,7 @@ func ListCase(c *gin.Context) {
 func DetailCase(c *gin.Context) {
 	var detailCaseIn schemas.DetailCaseIn
 	if err := c.ShouldBindUri(&detailCaseIn); err != nil {
-		core.Error(c, 1, err.Error())
+		core.Error(c, 1, core.Translate(err))
 		return
 	}
 	detail, err := casesModel.FindById(detailCaseIn.CaseId)

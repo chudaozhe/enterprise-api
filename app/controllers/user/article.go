@@ -10,12 +10,12 @@ import (
 func ListArticle(c *gin.Context) {
 	var currentCategory schemas.CurrentCategory
 	if err := c.ShouldBindUri(&currentCategory); err != nil {
-		core.Error(c, 1, err.Error())
+		core.Error(c, 1, core.Translate(err))
 		return
 	}
 	var listArticleIn schemas.ListArticleIn
 	if err := c.ShouldBindQuery(&listArticleIn); err != nil {
-		core.Error(c, 1, err.Error())
+		core.Error(c, 1, core.Translate(err))
 		return
 	}
 	var categoryIds []int
@@ -29,10 +29,11 @@ func ListArticle(c *gin.Context) {
 		core.Success(c, 0, gin.H{"count": count, "list": articles})
 	}
 }
+
 func DetailArticle(c *gin.Context) {
 	var detailArticleIn schemas.DetailArticleIn
 	if err := c.ShouldBindUri(&detailArticleIn); err != nil {
-		core.Error(c, 1, err.Error())
+		core.Error(c, 1, core.Translate(err))
 		return
 	}
 	article, err := articleModel.FindById(detailArticleIn.ArticleId)

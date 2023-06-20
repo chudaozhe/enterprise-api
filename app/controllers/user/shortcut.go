@@ -10,7 +10,7 @@ import (
 func ListShortcut(c *gin.Context) {
 	var listShortcutIn schemas.ListShortcutIn
 	if err := c.ShouldBindQuery(&listShortcutIn); err != nil {
-		core.Error(c, 1, err.Error())
+		core.Error(c, 1, core.Translate(err))
 		return
 	}
 	list, err := shortcutModel.List(true, listShortcutIn.Page, listShortcutIn.Max)
