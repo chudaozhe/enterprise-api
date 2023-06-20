@@ -26,6 +26,30 @@ func StructToMap(obj interface{}) map[string]interface{} {
 	return data
 }
 
+func MapToStruct(data map[string]interface{}, target interface{}) error {
+	targetType := reflect.TypeOf(target)
+	if targetType.Kind() != reflect.Ptr || targetType.Elem().Kind() != reflect.Struct {
+		return fmt.Errorf("target must be a pointer to a struct")
+	}
+
+	targetValue := reflect.ValueOf(target).Elem()
+	for key, value := range data {
+		field := targetValue.FieldByName(key)
+		if !field.IsValid() {
+			continue // 忽略不存在的字段
+		}
+
+		fieldValue := reflect.ValueOf(value)
+		if field.Type() != fieldValue.Type() {
+			return fmt.Errorf("type mismatch for field %s", key)
+		}
+
+		field.Set(fieldValue)
+	}
+
+	return nil
+}
+
 func Md5(str string) string {
 	data := []byte(str)
 	return fmt.Sprintf("%x", md5.Sum(data))
