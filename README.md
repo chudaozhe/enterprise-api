@@ -92,4 +92,5 @@ go mod tidy
 需要先切换到`release`或`test`模式
 ```
 docker build -t chudaozhe/ent:1.1-test .
+docker build -t ghcr.io/chudaozhe/ent:1.1-test .
 ```

@@ -1,7 +1,7 @@
 {
   "app_name": "app",
-  "app_host": "//localhost",
-  "app_port": ":7097",
+  "app_host": "//ent.cuiwei.net",
+  "app_port": ":8097",
   "jwt_key": "abc",
   "database": {
     "dsn": "root:@tcp(docker-mysql:3306)/ent?charset=utf8&parseTime=True&loc=Local&timeout=10ms"
@@ -23,7 +23,7 @@
   "mail_config": {
     "title": "您的密码已被重置",
     "content": "登录名:{username}\n密码:{passwd}\n访问这里登录:<a href='{url}' target='_blank'>{url}</a> \n\n\n\n此邮件由系统自动发出,请勿回复",
-    "url": "http://localhost/console/"
+    "url": "http://ent.cuiwei.net/console/"
   },
   "file_config": {
     "prefix": "data/upload/",

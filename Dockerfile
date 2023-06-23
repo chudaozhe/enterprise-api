@@ -1,4 +1,6 @@
 FROM golang:1.19 AS build
+LABEL org.opencontainers.image.authors="chudaozhe@outlook.com" \
+      org.opencontainers.image.source="https://github.com/chudaozhe/enterprise-api"
 WORKDIR /usr/src/app
 RUN go env -w GO111MODULE=on
 RUN go env -w GOPROXY=https://goproxy.cn,direct
