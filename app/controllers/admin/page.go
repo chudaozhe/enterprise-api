@@ -61,7 +61,8 @@ func DetailPage(c *gin.Context) {
 	}
 	detail, err := pageModel.FindById(currentPage.PageId)
 	if err != nil {
-		core.Error(c, 1, err.Error())
+		_ = c.Error(err)
+		return
 	} else {
 		core.Success(c, 0, detail)
 	}
@@ -80,7 +81,7 @@ func ChangePage(c *gin.Context) {
 	}
 	page, err := pageModel.FindById(changePageHeaderIn.PageId)
 	if err != nil {
-		core.Error(c, 1, "记录不存在")
+		_ = c.Error(err)
 		return
 	}
 	page.Title = changePageIn.Title

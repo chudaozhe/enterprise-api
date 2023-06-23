@@ -10,7 +10,7 @@ import (
 func InitRouter() *gin.Engine {
 	router := gin.Default()
 	// 要在路由组之前全局使用「跨域中间件」, 否则OPTIONS会返回404
-	router.Use(middlewares.FixParam(), middlewares.Cors(), middlewares.LoggerToFile())
+	router.Use(middlewares.Error(), middlewares.FixParam(), middlewares.Cors(), middlewares.LoggerToFile())
 	v1 := router.Group("v1")
 
 	userRouter := v1.Group("user")

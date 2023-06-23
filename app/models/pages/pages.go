@@ -1,6 +1,7 @@
 package pages
 
 import (
+	customError "enterprise-api/app/models/errors"
 	orm "enterprise-api/core/db"
 	"enterprise-api/core/helper"
 	"errors"
@@ -34,7 +35,7 @@ func FindById(id int) (page Page, err error) {
 		Where("cw_pages.id = ?", id).
 		First(&page)
 	if errors.Is(result.Error, gorm.ErrRecordNotFound) {
-		err = errors.New("记录不存在")
+		err = customError.New(4, "记录不存在")
 		return
 	}
 	return

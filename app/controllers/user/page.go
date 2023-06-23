@@ -15,7 +15,8 @@ func DetailPage(c *gin.Context) {
 	}
 	detail, err := pageModel.FindById(detailPageIn.PageId)
 	if err != nil {
-		core.Error(c, 1, err.Error())
+		_ = c.Error(err)
+		return
 	} else {
 		core.Success(c, 0, detail)
 	}

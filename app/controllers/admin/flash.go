@@ -15,7 +15,8 @@ func ListFlash(c *gin.Context) {
 	}
 	list, err := flashModel.List(false, listFlashIn.Page, listFlashIn.Max)
 	if err != nil {
-		core.Error(c, 1, err.Error())
+		_ = c.Error(err)
+		return
 	} else {
 		core.Success(c, 0, list)
 	}

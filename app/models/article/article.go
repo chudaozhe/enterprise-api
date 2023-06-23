@@ -1,10 +1,10 @@
 package article
 
 import (
+	customError "enterprise-api/app/models/errors"
 	orm "enterprise-api/core/db"
 	"enterprise-api/core/helper"
 	"errors"
-	"fmt"
 	"gorm.io/gorm"
 )
 
@@ -46,7 +46,7 @@ func FindById(id int) (article ArticleResult, err error) {
 		Where("cw_article.id = ?", id).
 		First(&article)
 	if errors.Is(result.Error, gorm.ErrRecordNotFound) {
-		err = errors.New("记录不存在")
+		err = customError.New(4, "记录不存在")
 		return
 	}
 	return
@@ -72,7 +72,7 @@ func List(category_ids []int, keyword string, user bool, page int, max int) (cou
 	}
 	result := queryDB.Find(&articles).Offset(-1).Limit(-1).Count(&count)
 	if result.Error != nil {
-		fmt.Println("not found")
+		err = customError.New(4, result.Error.Error())
 		return
 	}
 	return

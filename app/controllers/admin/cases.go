@@ -20,7 +20,7 @@ func ListCase(c *gin.Context) {
 	}
 	count, list, err := casesModel.List(currentCategory.CategoryId, listCaseIn.Keyword, false, listCaseIn.Page, listCaseIn.Max)
 	if err != nil {
-		core.Error(c, 1, err.Error())
+		_ = c.Error(err)
 		return
 	}
 	core.Success(c, 0, gin.H{"count": count, "list": list})
@@ -64,7 +64,7 @@ func DetailCase(c *gin.Context) {
 	}
 	detail, err := casesModel.FindById(currentCase.CaseId)
 	if err != nil {
-		core.Error(c, 1, err.Error())
+		_ = c.Error(err)
 		return
 	}
 	core.Success(c, 0, detail)
@@ -84,7 +84,7 @@ func ChangeCase(c *gin.Context) {
 	}
 	cases, err := casesModel.FindById(changeCaseHeaderIn.CaseId)
 	if err != nil {
-		core.Error(c, 1, "记录不存在")
+		_ = c.Error(err)
 		return
 	}
 	cases.Title = changeCaseIn.Title

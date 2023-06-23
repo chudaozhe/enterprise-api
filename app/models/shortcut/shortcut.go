@@ -1,10 +1,10 @@
 package shortcut
 
 import (
+	customError "enterprise-api/app/models/errors"
 	orm "enterprise-api/core/db"
 	"enterprise-api/core/helper"
 	"errors"
-	"fmt"
 	"gorm.io/gorm"
 )
 
@@ -47,7 +47,7 @@ func List(user bool, page int, max int) (shortcuts []*Shortcut, err error) {
 	}
 	result := queryDB.Find(&shortcuts)
 	if result.Error != nil {
-		fmt.Println("not found")
+		err = customError.New(4, result.Error.Error())
 		return
 	}
 	return

@@ -15,7 +15,8 @@ func ListShortcut(c *gin.Context) {
 	}
 	list, err := shortcutModel.List(false, listShortcutIn.Page, listShortcutIn.Max)
 	if err != nil {
-		core.Error(c, 1, err.Error())
+		_ = c.Error(err)
+		return
 	} else {
 		core.Success(c, 0, list)
 	}

@@ -25,7 +25,8 @@ func ListArticle(c *gin.Context) {
 	}
 	count, articles, err := articleModel.List(categoryIds, listArticleIn.Keyword, false, listArticleIn.Page, listArticleIn.Max)
 	if err != nil {
-		core.Error(c, 1, err.Error())
+		_ = c.Error(err)
+		return
 	} else {
 		core.Success(c, 0, gin.H{"count": count, "list": articles})
 	}
@@ -52,7 +53,8 @@ func List2Article(c *gin.Context) {
 	}
 	count, articles, err := articleModel.List(category_ids, list2ArticleIn.Keyword, false, list2ArticleIn.Page, list2ArticleIn.Max)
 	if err != nil {
-		core.Error(c, 1, err.Error())
+		_ = c.Error(err)
+		return
 	} else {
 		core.Success(c, 0, gin.H{"count": count, "list": articles})
 	}
@@ -99,7 +101,8 @@ func DetailArticle(c *gin.Context) {
 	}
 	article, err := articleModel.FindById(detailArticleIn.ArticleId)
 	if err != nil {
-		core.Error(c, 1, err.Error())
+		_ = c.Error(err)
+		return
 	} else {
 		core.Success(c, 0, article)
 	}
@@ -120,7 +123,7 @@ func ChangeArticle(c *gin.Context) {
 
 	article, err := articleModel.FindById(changeArticleHeaderIn.ArticleId)
 	if err != nil {
-		core.Error(c, 1, "记录不存在")
+		_ = c.Error(err)
 		return
 	}
 	article.Title = changeArticleIn.Title

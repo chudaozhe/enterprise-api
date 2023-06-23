@@ -15,7 +15,7 @@ func ListCategory(c *gin.Context) {
 	}
 	list, err := categoryModel.List(listCategoryIn.Type)
 	if err != nil {
-		core.Error(c, 1, err.Error())
+		_ = c.Error(err)
 		return
 	}
 	core.Success(c, 0, list)

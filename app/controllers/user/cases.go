@@ -20,7 +20,8 @@ func ListCase(c *gin.Context) {
 	}
 	count, list, err := casesModel.List(currentCategory.CategoryId, listCaseIn.Keyword, false, listCaseIn.Page, listCaseIn.Max)
 	if err != nil {
-		core.Error(c, 1, err.Error())
+		_ = c.Error(err)
+		return
 	} else {
 		core.Success(c, 0, gin.H{"count": count, "list": list})
 	}
@@ -34,7 +35,8 @@ func DetailCase(c *gin.Context) {
 	}
 	detail, err := casesModel.FindById(detailCaseIn.CaseId)
 	if err != nil {
-		core.Error(c, 1, err.Error())
+		_ = c.Error(err)
+		return
 	} else {
 		core.Success(c, 0, detail)
 	}

@@ -11,7 +11,8 @@ import (
 func ListGroup(c *gin.Context) {
 	list, err := groupModel.List(1)
 	if err != nil {
-		core.Error(c, 1, err.Error())
+		_ = c.Error(err)
+		return
 	} else {
 		core.Success(c, 0, list)
 	}

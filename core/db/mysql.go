@@ -16,10 +16,10 @@ func Init() {
 	})
 
 	if err != nil {
-		fmt.Printf("mysql connect error %v", err)
+		panic(fmt.Errorf("mysql connect error: %w", err))
 	}
 
 	if Db.Error != nil {
-		fmt.Printf("database error %v", Db.Error)
+		panic(fmt.Errorf("database error: %w", Db.Error))
 	}
 }

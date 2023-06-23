@@ -1,10 +1,10 @@
 package cases
 
 import (
+	customError "enterprise-api/app/models/errors"
 	orm "enterprise-api/core/db"
 	"enterprise-api/core/helper"
 	"errors"
-	"fmt"
 	"gorm.io/gorm"
 )
 
@@ -39,7 +39,7 @@ func FindById(id int) (cases Case, err error) {
 		Where("cw_case.id = ?", id).
 		First(&cases)
 	if errors.Is(result.Error, gorm.ErrRecordNotFound) {
-		err = errors.New("记录不存在")
+		err = customError.New(4, "记录不存在")
 		return
 	}
 	return
@@ -61,7 +61,7 @@ func List(categoryId int, keyword string, user bool, page int, max int) (count i
 	}
 	result := queryDB.Find(&casess).Offset(-1).Limit(-1).Count(&count)
 	if result.Error != nil {
-		fmt.Println("not found")
+		err = customError.New(4, result.Error.Error())
 		return
 	}
 	return

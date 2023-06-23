@@ -21,6 +21,8 @@ func InitRedis() {
 		PoolSize:     10,
 		PoolTimeout:  30 * time.Second,
 	})
-	pong, err := RedisClient.Ping().Result()
-	fmt.Println(pong, err)
+	_, err := RedisClient.Ping().Result()
+	if err != nil {
+		panic(fmt.Errorf("redis connect error: %w", err))
+	}
 }

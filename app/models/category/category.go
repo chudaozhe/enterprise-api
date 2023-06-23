@@ -1,6 +1,7 @@
 package category
 
 import (
+	customError "enterprise-api/app/models/errors"
 	"enterprise-api/app/models/files"
 	orm "enterprise-api/core/db"
 	"enterprise-api/core/helper"
@@ -59,7 +60,7 @@ func List(type0 int) (categorys []*Category, err error) {
 		Order("cw_category.id desc").
 		Find(&categorys)
 	if result.Error != nil {
-		fmt.Println("not found")
+		err = customError.New(4, result.Error.Error())
 		return
 	}
 	return
