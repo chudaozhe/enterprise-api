@@ -57,6 +57,7 @@ type DetailAdmin2In struct {
 }
 
 type DeleteAdminIn struct {
+	CurrentAdmin
 	TargetAdmin
 }
 

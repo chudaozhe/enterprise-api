@@ -100,9 +100,10 @@ func DeleteAdmin(c *gin.Context) {
 		core.Error(c, 1, err.Error())
 		return
 	}
-	err := models.DeleteAdminById(deleteAdminIn.ToAid)
+	err := models.DeleteAdminById(deleteAdminIn.AdminId, deleteAdminIn.ToAid)
 	if err != nil {
-		core.Error(c, 1, err.Error())
+		_ = c.Error(err)
+		return
 	} else {
 		core.Success(c, 0, gin.H{"delete": true})
 	}

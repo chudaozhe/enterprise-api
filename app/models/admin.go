@@ -2,6 +2,7 @@ package models
 
 import (
 	"enterprise-api/app/config"
+	customError "enterprise-api/app/models/errors"
 	orm "enterprise-api/core/db"
 	"enterprise-api/core/helper"
 	"errors"
@@ -138,8 +139,15 @@ func (admin Admin) UpdateAdmin() (err error) {
 }
 
 // 删除
-func DeleteAdminById(id int) (err error) {
-	err = orm.Db.Where("id=?", id).Delete(&Admin{}).Error
+func DeleteAdminById(id, toId int) (err error) {
+	if id == toId {
+		err = customError.New(5, "无法删除自己账号")
+		return
+	}
+	res := orm.Db.Where("id=?", toId).Delete(&Admin{})
+	if res.Error != nil {
+		err = customError.New(5, res.Error.Error())
+	}
 	return
 }
 
