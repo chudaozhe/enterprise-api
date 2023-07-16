@@ -2,7 +2,9 @@ package middlewares
 
 import (
 	"enterprise-api/app/models/errors"
+	"enterprise-api/core"
 	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
 	"net/http"
 )
 
@@ -14,13 +16,22 @@ func Error() gin.HandlerFunc {
 		// 检查c.Errors中是否有错误
 		for _, errorItem := range c.Errors {
 			err := errorItem.Err
-			// 若是自定义的错误则将err、msg返回
-			if customErr, ok := err.(*errors.CustomError); ok {
+			//fmt.Printf("Type: %T\n", err)
+			switch err.(type) {
+			case validator.ValidationErrors:
 				c.JSON(http.StatusOK, gin.H{
-					"err": customErr.Err,
-					"msg": customErr.Msg,
+					"err": 400,
+					"msg": core.Translate(err),
 				})
-			} else {
+			case *errors.CustomError:
+				// 若是自定义的错误则将err、msg返回
+				if customErr, ok := err.(*errors.CustomError); ok {
+					c.JSON(http.StatusOK, gin.H{
+						"err": customErr.Err,
+						"msg": customErr.Msg,
+					})
+				}
+			default:
 				// 非自定义错误则返回详细错误信息err.Error()
 				c.JSON(http.StatusOK, gin.H{
 					"err": 500,

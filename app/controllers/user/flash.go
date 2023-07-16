@@ -10,7 +10,7 @@ import (
 func ListFlash(c *gin.Context) {
 	var listFlashIn schemas.ListFlashIn
 	if err := c.ShouldBindQuery(&listFlashIn); err != nil {
-		core.Error(c, 1, core.Translate(err))
+		_ = c.Error(err)
 		return
 	}
 	list, err := flashModel.List(true, listFlashIn.Page, listFlashIn.Max)

@@ -10,7 +10,7 @@ import (
 func DetailPage(c *gin.Context) {
 	var detailPageIn schemas.DetailPageIn
 	if err := c.ShouldBindUri(&detailPageIn); err != nil {
-		core.Error(c, 1, core.Translate(err))
+		_ = c.Error(err)
 		return
 	}
 	detail, err := pageModel.FindById(detailPageIn.PageId)
