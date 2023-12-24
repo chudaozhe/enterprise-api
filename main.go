@@ -26,5 +26,6 @@ func main() {
 	cache.InitRedis()
 	//注册路由
 	router := routes.InitRouter()
+	router.Static("/data", "./data") // 设置静态文件根目录
 	router.Run(config.GetConfig().AppPort)
 }

@@ -1,6 +1,6 @@
 {
   "app_name": "app",
-  "app_host": "//ent.cuiwei.net",
+  "app_host": "//ent.uqiantu.com",
   "app_port": ":8097",
   "jwt_key": "abc",
   "database": {
@@ -23,7 +23,7 @@
   "mail_config": {
     "title": "您的密码已被重置",
     "content": "登录名:{username}\n密码:{passwd}\n访问这里登录:<a href='{url}' target='_blank'>{url}</a> \n\n\n\n此邮件由系统自动发出,请勿回复",
-    "url": "http://ent.cuiwei.net/console/"
+    "url": "http://ent.uqiantu.com/console/"
   },
   "file_config": {
     "prefix": "data/upload/",

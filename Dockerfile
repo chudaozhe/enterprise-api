@@ -14,7 +14,7 @@ RUN go build -mod=mod --tags netgo -v -o /usr/local/bin/app .
 
 FROM alpine:3.16
 WORKDIR "/data"
-EXPOSE 7097
+EXPOSE 8097
 # RUN mkdir /lib64 && ln -s /lib/libc.musl-x86_64.so.1 /lib64/ld-linux-x86-64.so.2
 COPY --from=build /usr/local/bin/app .
 CMD ["./app"]
